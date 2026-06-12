@@ -4,24 +4,28 @@
 
 **命令**: `/wealth-master`
 
-五阶段财富框架 + 七位投资大师思想，从0到财务自由的全周期路线图。
+五阶段财富框架 + 十位投资与债务管理大师思想，从0到财务自由的全周期路线图。
 
 先诊断你处于哪个阶段，再匹配对应的策略和大师思想。
 
-## 五阶段框架
+## 六阶段框架（含债务出清）
 
 ```
-阶段一 (0~20万)      → 积累第一桶金     → Munger + Buffett
-阶段二 (20~100万)    → 扩大现金流机器   → Bogle + Peter Lynch
-阶段三 (100~500万)   → 从赚钱到守钱     → Graham + Howard Marks
-阶段四 (500~2000万)  → 穿越周期         → Browne + Dalio
-阶段五 (2000万+)     → 财富传承         → 家族办公室/捐赠基金
+阶段零 (有高息负债)   → 债务出清           → Ramsey + Sethi
+阶段一 (0~20万)       → 积累第一桶金       → Munger + Buffett
+阶段二 (20~100万)     → 扩大现金流机器     → Bogle + Peter Lynch
+阶段三 (100~500万)    → 从赚钱到守钱       → Graham + Howard Marks
+阶段四 (500~2000万)   → 穿越周期           → Browne + Dalio
+阶段五 (2000万+)      → 财富传承           → 家族办公室/捐赠基金
 ```
 
 ## 覆盖的大师思想
 
 | 大师 | 核心贡献 | 对应阶段 |
 |------|---------|---------|
+| Dave Ramsey | 雪球还债法 | 零 |
+| Ramit Sethi | 好债vs坏债 | 零 |
+| Thomas Stanley | 消费观念纠偏 | 零 |
 | Charlie Munger | 多元思维模型 | 一 |
 | Warren Buffett | 复利与价值投资 | 一 |
 | John C. Bogle | 指数化投资 | 二 |
@@ -39,8 +43,8 @@
 
 ```
 我想配置资产  → 自动触发
-/wealth-master-zh             → 直接调用
-/wealth-master-zh 我有100万，怎么配置？
+/wealth-master                 → 直接调用
+/wealth-master 我有100万，怎么配置？
 ```
 
 ## 责任说明
@@ -55,3 +59,4 @@
 | v1.1 | 2026-06-12 | Claude | 名称简化为 harrybrowne-zh |
 | v1.2 | 2026-06-12 | Claude | 加入三阶段财富框架，多策略横向对比 |
 | v2.0 | 2026-06-12 | Claude | 升级为五阶段全周期框架，整合七位大师思想，更名为 wealth-master-zh |
+| v2.1 | 2026-06-12 | Claude | 新增 Stage 0 债务出清框架，整合Dave Ramsey/Ramit Sethi/Thomas Stanley三位大师，表格与说明同步更新 |

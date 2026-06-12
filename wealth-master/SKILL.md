@@ -1,5 +1,5 @@
 ---
-name: wealth-master-zh
+name: wealth-master
 description: >
   全周期理财大师（2026中国版）— 五阶段财富框架，从0到2000万+。
   整合巴菲特、芒格、博格、格雷厄姆、霍华德·马克斯、达利欧、哈里·布朗

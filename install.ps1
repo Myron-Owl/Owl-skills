@@ -8,9 +8,12 @@ param()
 $Repo = "https://github.com/Myron-Owl/Owl-skills.git"
 $SkillsDir = "$env:USERPROFILE\.claude\skills"
 
-# 判断是在本地运行还是远程
-$ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
-$IsLocal = Test-Path (Join-Path $ScriptPath "README.md")
+# 判断是在本地运行还是远程 (iex)
+$IsLocal = $false
+if ($MyInvocation.MyCommand.Path) {
+    $ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+    $IsLocal = Test-Path (Join-Path $ScriptPath "README.md")
+}
 
 if (-not $IsLocal) {
     Write-Host "→ Cloning repository..." -ForegroundColor Cyan

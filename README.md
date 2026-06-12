@@ -1,56 +1,53 @@
 # Owl's Skills 🦉
 
-> 我的 Claude Code 自用 skill 集合包。
+我的 Claude Code 自用 skill 集合包。
 
-## 收录技能
+## 已收录
 
-| Skill | Slash 命令 | 说明 |
-|-------|-----------|------|
-| 第一性原理思维 | `/1st-pr` | 拆解问题至基本真理，从底层重新构建解决方案 |
-
-_更多 skill 陆续添加中..._
+| Skill | 命令 | 说明 |
+|-------|------|------|
+| 1st-pr | `/1st-pr` | 第一性原理思维 — 拆解问题至基本真理，从底层重建解决方案 |
 
 ## 安装
 
-### 自动安装
+### macOS / Linux
 
 ```bash
-git clone https://github.com/Myron-Owl/Owl-skills.git ~/Owl-skills
-bash ~/Owl-skills/install.sh
+curl -fsSL https://raw.githubusercontent.com/Myron-Owl/Owl-skills/main/install.sh | bash
+```
+
+### Windows PowerShell
+
+```powershell
+irm https://raw.githubusercontent.com/Myron-Owl/Owl-skills/main/install.ps1 | iex
 ```
 
 ### 手动安装
 
-把需要的 skill 目录复制到 `~/.claude/skills/`：
-
 ```bash
-cp -r ~/Owl-skills/1st-pr ~/.claude/skills/
+git clone https://github.com/Myron-Owl/Owl-skills.git
+bash Owl-skills/install.sh
 ```
 
-## 使用
-
-重启 Claude Code，输入 `/` 查看所有可用 skill：
-
-```
-/1st-pr 为什么房价会上涨？
-```
+安装后重启 Claude Code，输入 `/1st-pr` 即可使用。
 
 ## 添加新 Skill
 
-在仓库根目录新建一个目录，里面放 `SKILL.md` 即可：
+仓库里新建目录 + `SKILL.md`，install 脚本会自动识别安装：
 
 ```
 Owl-skills/
-├── 1st-pr/
+├── 1st-pr/              ← 现有
 │   ├── SKILL.md
 │   └── examples/
-├── new-skill/              ← 新 skill
+├── your-skill/          ← 新 skill
 │   └── SKILL.md
 ├── install.sh
+├── install.ps1
 ├── LICENSE
 └── README.md
 ```
 
-## 许可证
+## LICENSE
 
 MIT

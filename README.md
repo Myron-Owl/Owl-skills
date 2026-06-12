@@ -35,19 +35,21 @@ bash Owl-skills/install.sh
 
 ## 添加新 Skill
 
-仓库里新建目录 + `SKILL.md`，install 脚本会自动识别安装：
+仓库里新建目录，包含 `SKILL.md`（给 Claude 读）和 `README.md`（给人看），install 脚本会自动识别安装：
 
 ```
 Owl-skills/
-├── 1st-pr/              ← 现有
-│   ├── SKILL.md
+├── 1st-pr/                  ← 现有
+│   ├── SKILL.md             ← 技能指令（Claude 读）
+│   ├── README.md            ← 技能说明（人读）
 │   └── examples/
-├── your-skill/          ← 新 skill
-│   └── SKILL.md
+├── your-skill/              ← 新 skill
+│   ├── SKILL.md
+│   └── README.md
 ├── install.sh
 ├── install.ps1
 ├── LICENSE
-└── README.md
+└── README.md                ← 合集介绍
 ```
 
 ## LICENSE

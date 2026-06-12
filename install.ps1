@@ -18,13 +18,18 @@ if ($MyInvocation.MyCommand.Path) {
 if (-not $IsLocal) {
     Write-Host "→ Cloning repository..." -ForegroundColor Cyan
     $TmpDir = Join-Path $env:TEMP "owl-skills-$([System.IO.Path]::GetRandomFileName())"
-    git clone --depth 1 $Repo $TmpDir 2>$null
+    git clone --depth 1 $Repo $TmpDir
+    if (-not (Test-Path $TmpDir)) {
+        Write-Host "❌ Clone failed. Check your network and try again." -ForegroundColor Red
+        exit 1
+    }
     $ScriptPath = $TmpDir
 }
 
 Write-Host "→ Installing Owl's Skills..." -ForegroundColor Cyan
 New-Item -ItemType Directory -Force -Path $SkillsDir | Out-Null
 
+$count = 0
 Get-ChildItem -Path $ScriptPath -Directory | ForEach-Object {
     $name = $_.Name
     if ($name -match '^[\._]') { return }
@@ -34,6 +39,7 @@ Get-ChildItem -Path $ScriptPath -Directory | ForEach-Object {
         $dest = Join-Path $SkillsDir $name
         New-Item -ItemType Directory -Force -Path $dest | Out-Null
         Copy-Item -Recurse -Force "$($_.FullName)\*" "$dest\"
+        $count++
     }
 }
 
@@ -42,4 +48,8 @@ if ($TmpDir -and (Test-Path $TmpDir)) {
 }
 
 Write-Host ""
-Write-Host "✅ Installed! Restart Claude Code and type / to see your skills." -ForegroundColor Green
+if ($count -gt 0) {
+    Write-Host "✅ Installed $count skill(s)! Restart Claude Code and type / to see them." -ForegroundColor Green
+} else {
+    Write-Host "⚠️ No skills found to install." -ForegroundColor Yellow
+}

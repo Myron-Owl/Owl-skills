@@ -7,6 +7,7 @@
 | Skill | 命令 | 说明 |
 |-------|------|------|
 | [1st-pr](1st-pr/README.md) | `/1st-pr` | 第一性原理思维 — 拆解问题至基本真理，从底层重建解决方案 |
+| [mao-thought](mao-thought/SKILL.md) | `/mao-thought` | 毛泽东思想分析框架 — 将实事求是、矛盾论等方法论应用于现代问题分析 |
 
 > 每个 skill 目录内有详细的 README 说明。点上面的 skill 名称查看。
 

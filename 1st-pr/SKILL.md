@@ -1,27 +1,6 @@
 ---
 name: 1st-pr
-preamble-tier: 2
-version: 1.0.0
 description: 第一性原理思维 — 拆解问题至基本真理，从底层重新构建解决方案。 (First Principles Thinking)
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Grep
-  - Glob
-  - AskUserQuestion
-  - WebSearch
-triggers:
-  - 第一性原理
-  - first principles
-  - 拆解问题
-  - decompose problem
-  - 从根本思考
-  - think from scratch
-  - 打破思维定势
-  - reason from fundamentals
-  - 归零思考
 ---
 
 ## When to invoke this skill

@@ -5,7 +5,7 @@
 #   远程安装: irm https://git.io/... | iex
 param()
 
-$Repo = "https://github.com/Myron-Owl/Owl-skills.git"
+$ZipUrl = "https://github.com/Myron-Owl/Owl-skills/archive/refs/heads/main.zip"
 $SkillsDir = "$env:USERPROFILE\.claude\skills"
 
 # 判断是在本地运行还是远程 (iex)
@@ -16,14 +16,28 @@ if ($MyInvocation.MyCommand.Path) {
 }
 
 if (-not $IsLocal) {
-    Write-Host "→ Cloning repository..." -ForegroundColor Cyan
+    Write-Host "→ Downloading Owl's Skills..." -ForegroundColor Cyan
     $TmpDir = Join-Path $env:TEMP "owl-skills-$([System.IO.Path]::GetRandomFileName())"
-    git clone --depth 1 $Repo $TmpDir
-    if (-not (Test-Path $TmpDir)) {
-        Write-Host "❌ Clone failed. Check your network and try again." -ForegroundColor Red
+    $ZipFile = Join-Path $TmpDir "repo.zip"
+    New-Item -ItemType Directory -Force -Path $TmpDir | Out-Null
+
+    try {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $web = New-Object System.Net.WebClient
+        $web.DownloadFile($ZipUrl, $ZipFile)
+    } catch {
+        Write-Host "❌ Download failed: $_" -ForegroundColor Red
+        Remove-Item -Recurse -Force $TmpDir -ErrorAction SilentlyContinue
         exit 1
     }
-    $ScriptPath = $TmpDir
+
+    Expand-Archive -Path $ZipFile -DestinationPath $TmpDir -Force
+    # ZIP 解压后目录名带分支名: Owl-skills-main
+    $ScriptPath = Join-Path $TmpDir "Owl-skills-main"
+    if (-not (Test-Path $ScriptPath)) {
+        # 如果目录名不对，用第一个子目录
+        $ScriptPath = (Get-ChildItem -Path $TmpDir -Directory | Select-Object -First 1).FullName
+    }
 }
 
 Write-Host "→ Installing Owl's Skills..." -ForegroundColor Cyan

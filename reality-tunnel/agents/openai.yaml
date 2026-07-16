@@ -1,0 +1,4 @@
+interface:
+  display_name: "现实隧道分析"
+  short_description: "区分事实与解释，拆解隐藏假设，生成替代模型与可验证行动"
+  default_prompt: "使用 $reality-tunnel 分析这个判断中的事实、隐藏假设、替代模型和下一步验证行动。"

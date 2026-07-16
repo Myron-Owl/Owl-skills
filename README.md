@@ -9,6 +9,7 @@
 | [1st-pr](1st-pr/README.md) | `/1st-pr` | 第一性原理思维 — 拆解问题至基本真理，从底层重建解决方案 |
 | [mao-thought](mao-thought/SKILL.md) | `/mao-thought` | 毛泽东思想分析框架 — 将实事求是、矛盾论等方法论应用于现代问题分析 |
 | [wealth-master](wealth-master/README.md) | `/wealth-master` | 全周期理财大师（2026中国版）— 五阶段财富框架，从0到2000万+ |
+| [reality-tunnel](reality-tunnel/README.md) | `/reality-tunnel` | 现实隧道分析器 — 受 Robert Anton Wilson 启发的认知决策工具。区分事实与解释，暴露隐藏假设，生成多机制竞争模型，将认知重构转化为可证伪验证与低成本行动。适用于拆解信念、复杂决策、团队冲突和游戏体验分析 |
 | [game-design-masters](game-design-masters/README.md) | `/game-design-masters` | 全球游戏设计大师知识库 + 六透镜分析引擎 — 收录23位大师的设计哲学、方法论与代表作品，支持多维度设计拆解与风险评估 |
 
 > 每个 skill 目录内有详细的 README 说明。点上面的 skill 名称查看。

@@ -1,5 +1,6 @@
 # 策划文档撰写技能 (GDD Writer)
 
+> GDD = Game Design Document（游戏设计文档）。
 > 一个 Claude Code skill — 严格遵循《策划文档 AI 协作规范》，按模板和规则生成 CC战棋 项目策划文档。
 
 ## 概述

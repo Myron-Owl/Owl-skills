@@ -7,6 +7,7 @@ param()
 
 $ZipUrl = "https://github.com/Myron-Owl/Owl-skills/archive/refs/heads/main.zip"
 $SkillsDir = "$env:USERPROFILE\.claude\skills"
+$CodexSkillsDir = "$env:USERPROFILE\.codex\skills"
 
 # 判断是在本地运行还是远程 (iex)
 $IsLocal = $false
@@ -42,17 +43,22 @@ if (-not $IsLocal) {
 
 Write-Host "→ Installing Owl's Skills..." -ForegroundColor Cyan
 New-Item -ItemType Directory -Force -Path $SkillsDir | Out-Null
+New-Item -ItemType Directory -Force -Path $CodexSkillsDir | Out-Null
 
 $count = 0
 Get-ChildItem -Path $ScriptPath -Directory | ForEach-Object {
     $name = $_.Name
-    if ($name -match '^[\._]') { return }
+    if ($name -match '^[\\._]') { return }
     $skillFile = Join-Path $_.FullName "SKILL.md"
     if (Test-Path $skillFile) {
         Write-Host "   • $name" -ForegroundColor Yellow
         $dest = Join-Path $SkillsDir $name
         New-Item -ItemType Directory -Force -Path $dest | Out-Null
         Copy-Item -Recurse -Force "$($_.FullName)\*" "$dest\"
+        # Codex 支持：同一套 skill 也装到 ~/.codex/skills/
+        $codexDest = Join-Path $CodexSkillsDir $name
+        New-Item -ItemType Directory -Force -Path $codexDest | Out-Null
+        Copy-Item -Recurse -Force "$($_.FullName)\*" "$codexDest\"
         $count++
     }
 }

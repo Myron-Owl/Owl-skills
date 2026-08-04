@@ -1,6 +1,6 @@
 ---
 name: game-video-prod
-description: 游戏评测视频全流程生产：脚本、标题、封面方案 + HyperFrames 合成渲染。触发：用户要求做评测视频、写脚本、取标题、做封面、剪辑合成时使用。兼容 Claude Code 与 Codex。
+description: 游戏评测视频全流程生产：脚本、标题、封面方案 + HyperFrames 合成渲染。触发：用户要求做评测视频、写脚本、取标题、做封面、剪辑合成时使用。兼容 Claude Code 与 Codex（含 agents/openai.yaml 元数据）。
 ---
 
 # Game Video Production

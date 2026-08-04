@@ -2,7 +2,7 @@
 
 **游戏评测视频全流程生产**（李三两Owl 视频号）
 
-脚本 → 标题 → 封面方案 → HyperFrames 合成 → 成片 MP4。兼容 **Claude Code 与 Codex**。
+脚本 → 标题 → 封面方案 → HyperFrames 合成 → 成片 MP4。兼容 **Claude Code 与 Codex**（`agents/openai.yaml` 提供 Codex 元数据，安装脚本自动同步到 `~/.codex/skills/`）。
 
 ## 用途
 - 输入：`video-projects/<游戏名>/raw/` 下的游戏录屏 + 用户口述观点/笔记

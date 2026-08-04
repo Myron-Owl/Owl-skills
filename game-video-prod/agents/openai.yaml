@@ -1,0 +1,4 @@
+interface:
+  display_name: "游戏评测视频生产"
+  short_description: "深度评测视频全流程：脚本（含三段式介绍法）、标题 3 备选、封面方案、HyperFrames 合成渲染"
+  default_prompt: "Use $game-video-prod to produce a game review video end-to-end: write the deep-review script (hook, intro, mechanics breakdown, pros/cons, verdict), generate 3 title candidates and a cover plan, then composite and render the final MP4 with HyperFrames."

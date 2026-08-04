@@ -8,6 +8,7 @@ set -e
 
 ZIP_URL="https://github.com/Myron-Owl/Owl-skills/archive/refs/heads/main.zip"
 SKILLS_DIR="$HOME/.claude/skills"
+CODEX_SKILLS_DIR="$HOME/.codex/skills"
 
 # 判断是在本地运行还是远程 pipe
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd 2>/dev/null || pwd)"
@@ -49,6 +50,7 @@ fi
 
 echo "→ Installing Owl's Skills..."
 mkdir -p "$SKILLS_DIR"
+mkdir -p "$CODEX_SKILLS_DIR"
 
 count=0
 for dir in "$SRC"/*/; do
@@ -59,6 +61,9 @@ for dir in "$SRC"/*/; do
     echo "   • $name"
     mkdir -p "$SKILLS_DIR/$name"
     cp -r "$dir/"* "$SKILLS_DIR/$name/"
+    # Codex 支持：同一套 skill 也装到 ~/.codex/skills/
+    mkdir -p "$CODEX_SKILLS_DIR/$name"
+    cp -r "$dir/"* "$CODEX_SKILLS_DIR/$name/"
     count=$((count + 1))
 done
 

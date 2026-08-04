@@ -24,6 +24,8 @@ Use a standalone workbook library only for low-risk new workbooks or explicitly 
 - For every edit, read [references/manifest-contract.md](references/manifest-contract.md).
 - For native or linked-workbook edits, read [references/native-edit-transaction.md](references/native-edit-transaction.md).
 - For delivery, strict protection, external links, or recovery, read [references/validation-and-rollback.md](references/validation-and-rollback.md).
+- For PowerShell/COM automation, generated formulas, merged-cell or validation edits, or strict relative-link cleanup, read [references/powershell-com-formula-pitfalls.md](references/powershell-com-formula-pitfalls.md).
+- For cell content, tables, validation, layout, reserved rows, batch edits, or delivery-directory decisions, read [references/workbook-content-and-delivery.md](references/workbook-content-and-delivery.md).
 - For provenance or disputed technical behavior, read [references/technical-sources.md](references/technical-sources.md).
 
 ## Establish the Contract
@@ -33,6 +35,8 @@ Before editing, create or complete `workbook_manifest.json` from [assets/workboo
 ```text
 python scripts/validate_manifest.py workbook_manifest.json
 ```
+
+Before starting Microsoft Excel, run the deterministic offline gate in `scripts/preflight_excel_payload.ps1` against the automation script, manifest, and compiled write payload when available. On Windows systems that block direct `.ps1` execution, load it explicitly with `Get-Content -Raw -Encoding UTF8` and `ScriptBlock.Create`. Do not request or start a native Excel session until the gate returns `PASS_OFFLINE_PREFLIGHT`.
 
 Require explicit values for:
 
@@ -50,24 +54,30 @@ Use this fixed sequence:
 
 1. **Preflight** — confirm files, locks, target Excel version, runtime paths, encoding, permissions, macro policy, dependency order, and available disk space.
 2. **Inventory** — capture sheets, names, tables, formulas, links, protected-range baselines, file hashes, and package structure. Run `scripts/inspect_xlsx_package.py` for `.xlsx` or `.xlsm` inputs.
-3. **Dry run** — compile the user request into [assets/edit_plan.example.json](assets/edit_plan.example.json). List every intended write and every range that must not change.
-4. **Backup** — create recoverable copies outside the formal delivery set and verify their hashes.
-5. **Native session** — start an isolated Microsoft Excel instance; do not attach to the user's unrelated interactive instance. Set macro security before programmatic opens.
-6. **Open dependencies** — open source workbooks before dependent workbooks, using the manifest order. Keep non-target dependencies read-only unless explicitly writable.
-7. **Edit** — disable events, screen updating, and automatic calculation temporarily. Write contiguous value and formula blocks as correctly sized two-dimensional matrices. Keep values and formulas in separate writes when practical. Avoid repeated saves and recalculations.
-8. **Recalculate** — update permitted links, call full dependency rebuild when required, wait until calculation state is done, then scan errors and acceptance cells.
-9. **Commit** — save only authorized target workbooks, normally once. Close all workbooks, quit the isolated Excel instance, release automation objects, and confirm locks are gone.
-10. **Reopen verification** — reopen the formal files read-only, with source files closed where the contract requires it. Recheck formulas, links, acceptance results, and protected ranges. Do not save during this phase.
-11. **Relocation/package verification** — when required, copy the entire dependency set to a different directory and repeat read-only verification. Audit the OOXML package after the last writable save.
-12. **Report or rollback** — emit [assets/validation_report.example.json](assets/validation_report.example.json). On failure, follow the rollback order exactly.
+3. **Dry run** — compile the user request into [assets/edit_plan.example.json](assets/edit_plan.example.json) and, for generated block writes, a machine-checkable payload. List every intended write and every range that must not change.
+4. **Offline preflight** — parse and lint automation scripts; validate the manifest; assert every payload matrix against its target range; test dynamic headers, single-row and multi-row blocks, formula tokens, zero/negative/blank boundaries, and failure-report serialization. Stop before Excel on any failure.
+5. **Backup** — create recoverable copies outside the formal delivery set and verify their hashes.
+6. **Native session** — start an isolated Microsoft Excel instance; do not attach to the user's unrelated interactive instance. Set macro security before programmatic opens.
+7. **Open dependencies** — open source workbooks before dependent workbooks, using the manifest order. Keep non-target dependencies read-only unless explicitly writable.
+8. **Edit** — disable events, screen updating, and automatic calculation temporarily. Write contiguous value and formula blocks as correctly sized two-dimensional matrices. Keep values and formulas in separate writes when practical. Avoid repeated saves and recalculations.
+9. **Recalculate** — update permitted links, call full dependency rebuild when required, wait until calculation state is done, then scan errors and acceptance cells.
+10. **Commit** — save only authorized target workbooks, normally once. Close all workbooks, quit the isolated Excel instance, release automation objects, and confirm locks are gone.
+11. **Reopen verification** — reopen the formal files read-only, with source files closed where the contract requires it. Recheck formulas, links, acceptance results, and protected ranges. Do not save during this phase.
+12. **Relocation/package verification** — when required, copy the entire dependency set to a different directory and repeat read-only verification. Audit the OOXML package after the last writable save.
+13. **Report or rollback** — emit [assets/validation_report.example.json](assets/validation_report.example.json). On failure, follow the rollback order exactly.
 
 ## Preserve Formula Semantics
 
 - Keep derived results as formulas. Keep assumptions and mapping rules visible and auditable.
 - Use stable IDs or explicit mapping tables; do not depend on incidental row order.
+- Separate the lookup domain from the current-record domain. For an appendable ID registry, use an Excel Table, dynamic named range, or whole-column lookup when performance is acceptable; do not hard-code the current last row into downstream lookups. Keep business counts and acceptance checks limited to live records identified by stable IDs or status.
 - Distinguish true blank, formula `""`, numeric `0`, and lookup failure.
+- Do not use a bare reference for an optional field when blank must remain blank; use an explicit blank-preserving formula such as `=IF(Source!A1="","",Source!A1)`.
 - Treat A1 formula text, R1C1 pattern, cell kind, cached value, style/number format, and shared-formula metadata as separate evidence.
 - Re-read first, boundary, representative middle, and last formulas after Excel saves contiguous formula blocks.
+- For programmatically generated formulas, assert expected range tokens and business predicates after write. A syntactically valid shortened range is still a failed edit.
+- Validate admissibility rather than equality to a default. A valid explicit override such as `0` must not fail merely because most rows inherit `1`. Test completeness, allowed range, fallback use, and override legality as separate predicates.
+- Declare the rounding stage for every multi-layer formula chain. Do not round an intermediate layer unless the workbook contract explicitly requires it; test reference reproduction with zero, negative, blank, and boundary inputs before native execution.
 - Never copy an OOXML external-link index such as `[1]` or `[3]` into a new formula. Resolve and write the real workbook name.
 - Do not use formula-bar appearance alone as proof that an external link is healthy.
 

@@ -39,6 +39,16 @@ Verify:
 - The complete dependency set works after relocation when required.
 - Strict no-absolute-path packages contain no prohibited drive, UNC, or `file:///` targets after the final writable save.
 
+Excel may preserve a relative primary external-link relationship and still add absolute fallback metadata during native save. For strict relative packages, inspect all of these after the last writable save:
+
+- `xl/externalLinks/_rels/*.rels` absolute `externalLinkPath` relationships.
+- `xxl21:alternateUrls` / `xxl21:absoluteUrl` nodes in `xl/externalLinks/*.xml`.
+- `x15ac:absPath` metadata in `xl/workbook.xml`.
+
+If cleanup is authorized, back up the workbook and patch only the proven absolute fallback nodes. Keep the relative primary relationship. Then reopen in Excel read-only, run acceptance checks, repeat the relocation test, audit the package again, and never save the cleaned formal workbook from Excel afterward. For package access, use a ZIP-capable API such as .NET `ZipArchive`; PowerShell `Expand-Archive` may reject an `.xlsx` extension even though the file is a ZIP package.
+
+Make cleanup feature-detected and idempotent. Optional `externalLinks` parts or fallback nodes may already be absent; absence is not an error. The completion condition is a clean package audit with no prohibited absolute-path hits, followed by read-only reopen and relocation success.
+
 Run the read-only package audit:
 
 ```text
@@ -50,6 +60,12 @@ If strict no-absolute-path cleanup is performed, do it after the last writable E
 ## Visual checks
 
 Inspect every affected sheet and each downstream presentation/result sheet. Check clipped headers and numbers, widths, row heights, formats, freezes, filters, validation prompts, conditional formatting, charts, and abnormal used ranges. Reinspect after layout repairs.
+
+Treat image export as asynchronous. After `CopyPicture`, allow the clipboard to settle, then verify that the PNG has plausible dimensions and is not near-blank. If the workbook contains visible styled cells but the preview is blank, reactivate the sheet, copy the smallest required range, wait, and retry. A successful `Chart.Export` return value alone is not visual evidence.
+
+If `CopyPicture` or chart export remains blank or raises `0x800A03EC`, use a read-only native fallback: set a temporary print area in memory, export the affected sheet range with `ExportAsFixedFormat` to PDF, render the PDF to an image, inspect it, close without saving, and discard the temporary files. Never save preview-only page setup changes into the formal workbook.
+
+Also inspect business semantics that formula-error scans cannot detect: status cells unexpectedly showing failure, optional IDs changing from blank to `0`, reserved rows counted as live records, percentages or units rendered incorrectly, and valid formulas referencing a truncated range. Define valid-record counts from stable IDs and compare passed-status counts to those IDs rather than to physical row count, `UsedRange`, or the number of formula cells.
 
 ## Rollback order
 
@@ -81,3 +97,4 @@ Copy `assets/validation_report.example.json`. Include:
 - External-link and relocation evidence.
 - Backup and rollback evidence.
 - Known limitations and warnings.
+- Failure stage, workbook, sheet/range, operation, native error/HRESULT, and script stack when applicable.

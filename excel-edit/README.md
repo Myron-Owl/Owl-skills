@@ -98,3 +98,4 @@ excel-edit/
 |------|------|------|
 | v1.0 | 2026-08-04 | 初始整合到 Owl-skills，删除 OpenAI 配置，去除外部不存在的依赖引用 |
 | v1.1 | 2026-08-04 | 技能重命名为 `/excel-edit`（原名 edit-excel-workbooks），目录同步改名，恢复 OpenAI/Codex 兼容配置 |
+| v1.2 | 2026-08-04 | 外部更新解决外链问题（新增 PowerShell/COM 陷阱与交付规范、离线预检脚本），并保持 `/excel-edit` 命名不变 |

@@ -13,6 +13,7 @@
 | [gd-master](gd-master/README.md) | `/gd-master` | 全球游戏设计大师知识库 + 六透镜分析引擎 — 收录23位大师的设计哲学 |
 | [gdd-writer](gdd-writer/README.md) | `/gdd-writer` | GDD 策划文档撰写 — 按规范生成 CC战棋 项目策划文档 |
 | [language-defaults](language-defaults/README.md) | `/language-defaults` | 语言默认值分析器 — 英汉语法默认值认知差异框架，五种分析模式 |
+| [edit-excel-workbooks](edit-excel-workbooks/README.md) | `/edit-excel-workbooks` | 安全编辑 Excel 工作簿 — 依赖图驱动的事务式编辑器，原生 Excel 验证，五级保护 |
 
 > 每个 skill 目录内有详细的 README 说明。点上面的 skill 名称查看。
 

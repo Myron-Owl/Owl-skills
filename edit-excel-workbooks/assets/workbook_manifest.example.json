@@ -1,0 +1,88 @@
+{
+  "manifest_version": "1.0",
+  "excel_target": {
+    "edition": "Microsoft 365 or Excel 2024",
+    "version": "confirm-before-run",
+    "architecture": "64-bit"
+  },
+  "entry_workbook": "Result.xlsx",
+  "dependency_order": [
+    "Parameters.xlsx",
+    "Source.xlsx",
+    "Result.xlsx"
+  ],
+  "targets": [
+    "Result.xlsx"
+  ],
+  "ranges": {
+    "editable": {
+      "Result.xlsx": [
+        "Config!D5:D20"
+      ]
+    },
+    "expandable": {
+      "Result.xlsx": [
+        "Config!A5:N200"
+      ]
+    },
+    "formula_structure_protected": {
+      "Result.xlsx": [
+        "Calculation!A1:Z500"
+      ]
+    },
+    "result_protected": {
+      "Result.xlsx": [
+        "Summary!H5:H100"
+      ]
+    },
+    "strict_protected": {
+      "Result.xlsx": [
+        "Archive!A1:Z500"
+      ]
+    }
+  },
+  "link_policy": {
+    "mode": "relative_same_folder",
+    "strict_no_absolute_paths": false,
+    "allowed_external_workbooks": [
+      "Parameters.xlsx",
+      "Source.xlsx"
+    ]
+  },
+  "calculation": {
+    "mode": "full_rebuild",
+    "wait_for_done": true,
+    "timeout_seconds": 600,
+    "update_workbook_links": true,
+    "refresh_external_data": false
+  },
+  "acceptance": {
+    "scan_formula_errors": true,
+    "formula_error_exceptions": [],
+    "source_closed_test": true,
+    "reopen_read_only": true,
+    "relocation_test": true,
+    "cells": [
+      {
+        "workbook": "Result.xlsx",
+        "sheet": "Summary",
+        "cell": "H12",
+        "check": "not_error",
+        "reason": "Representative downstream result"
+      }
+    ]
+  },
+  "security": {
+    "macro_policy": "force_disable",
+    "allow_external_content": "workbook_links_only"
+  },
+  "transaction": {
+    "require_dry_run": true,
+    "require_backup": true,
+    "allow_save": true,
+    "save_targets_only": true,
+    "max_writable_sessions": 1,
+    "rollback_on_failure": true
+  },
+  "notes": []
+}

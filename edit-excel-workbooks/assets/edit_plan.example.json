@@ -1,0 +1,36 @@
+{
+  "plan_version": "1.0",
+  "manifest": "workbook_manifest.json",
+  "request_summary": "Describe the requested workbook change.",
+  "route": "native_excel",
+  "writes": [
+    {
+      "workbook": "Result.xlsx",
+      "sheet": "Config",
+      "range": "D5:D6",
+      "kind": "values",
+      "rows": 2,
+      "columns": 1,
+      "expected_before": [
+        [null],
+        [null]
+      ],
+      "payload": [
+        [0.1],
+        [0.2]
+      ],
+      "reason": "Approved input update"
+    }
+  ],
+  "expected_propagation": [
+    "Result.xlsx|Summary!H5:H100"
+  ],
+  "must_not_change": [
+    "Result.xlsx|Archive!A1:Z500"
+  ],
+  "formula_structure_must_not_change": [
+    "Result.xlsx|Calculation!A1:Z500"
+  ],
+  "warnings": [],
+  "approved": false
+}

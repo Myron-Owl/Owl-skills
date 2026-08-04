@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the operational shape of an edit-excel-workbooks manifest."""
+"""Validate the operational shape of an excel-edit manifest."""
 
 from __future__ import annotations
 

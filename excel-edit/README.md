@@ -2,7 +2,7 @@
 
 ## 概述
 
-**命令**: `/edit-excel-workbooks`
+**命令**: `/excel-edit`
 
 企业级 Excel 工作簿安全编辑框架。将 Excel 编辑视为**依赖图上的事务（Transaction）**，而非简单的单元格写入操作。
 
@@ -50,7 +50,7 @@
 ## 文件结构
 
 ```
-edit-excel-workbooks/
+excel-edit/
 ├── SKILL.md                          ← 技能完整指令（Claude 读）
 ├── README.md                         ← 本文件（人读）
 ├── scripts/
@@ -72,7 +72,7 @@ edit-excel-workbooks/
 
 ```
 帮我修改这个 Excel 文件的值                   → 自动触发
-/edit-excel-workbooks                        → 直接调用
+/excel-edit                              → 直接调用
 这个工作簿的公式引用了外部文件，改之前先建模依赖  → Claude 会建议走原生 Excel 路由
 ```
 
@@ -97,3 +97,4 @@ edit-excel-workbooks/
 | 版本 | 日期 | 变更 |
 |------|------|------|
 | v1.0 | 2026-08-04 | 初始整合到 Owl-skills，删除 OpenAI 配置，去除外部不存在的依赖引用 |
+| v1.1 | 2026-08-04 | 技能重命名为 `/excel-edit`（原名 edit-excel-workbooks），目录同步改名，恢复 OpenAI/Codex 兼容配置 |

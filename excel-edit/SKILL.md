@@ -1,5 +1,5 @@
 ---
-name: edit-excel-workbooks
+name: excel-edit
 description: Safely inspect, create, edit, recalculate, validate, and deliver Microsoft Excel workbooks, especially existing .xlsx/.xlsm files with dense formula chains, cross-sheet formulas, cross-workbook links, named ranges, shared or dynamic formulas, macros, data connections, or strict preservation requirements. Use for Excel changes that require native Microsoft Excel truth, minimal targeted edits, dependency-aware opening, formula/link regression checks, OOXML package auditing, rollback, relocation testing, or a machine-readable workbook manifest. Do not use for game-design balancing or project-specific numeric design rules.
 ---
 

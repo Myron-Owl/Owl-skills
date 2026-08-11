@@ -1,4 +1,4 @@
 interface:
   display_name: "游戏评测与推荐视频生产"
-  short_description: "风格研究、三段式脚本、标题封面与 HyperFrames 成片"
-  default_prompt: "Use $game-video-prod to research the relevant video style, write an evidence-backed game review or recommendation script, generate three title-and-cover packages, and composite the final video with HyperFrames."
+  short_description: "风格研究、三段式脚本、横竖版标题封面与 HyperFrames 成片"
+  default_prompt: "Use $game-video-prod to research the relevant video style, write an evidence-backed game review or recommendation script, generate three title-and-cover packages with platform-appropriate horizontal or vertical layouts, and composite the final video with HyperFrames."

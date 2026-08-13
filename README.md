@@ -14,6 +14,7 @@
 | [gdd-writer](gdd-writer/README.md) | `/gdd-writer` | GDD 策划文档撰写 — 按规范生成 CC战棋 项目策划文档 |
 | [language-defaults](language-defaults/README.md) | `/language-defaults` | 语言默认值分析器 — 英汉语法默认值认知差异框架，五种分析模式 |
 | [excel-edit](excel-edit/README.md) | `/excel-edit` | 安全编辑 Excel 工作簿 — 依赖图驱动的事务式编辑器，原生 Excel 验证，五级保护 |
+| [game-video-prod](game-video-prod/README.md) | `/game-video-prod` | 游戏评测与推荐视频全流程生产 — 风格研究、脚本、标题、封面与 HyperFrames 合成渲染 |
 
 > 每个 skill 目录内有详细的 README 说明。点上面的 skill 名称查看。
 
@@ -42,12 +43,12 @@ bash Owl-skills/install.sh
 
 ## 添加新 Skill
 
-仓库里新建目录，包含 `SKILL.md`（给 Claude 读）和 `README.md`（给人看），install 脚本会自动识别安装：
+仓库里新建目录，包含 `SKILL.md`（给 AI 读）和 `README.md`（给人看），install 脚本会自动识别安装：
 
 ```
 Owl-skills/
 ├── 1st-pr/                  ← 现有
-│   ├── SKILL.md             ← 技能指令（Claude 读）
+│   ├── SKILL.md             ← 技能指令（AI 读）
 │   ├── README.md            ← 技能说明（人读）
 │   └── examples/
 ├── your-skill/              ← 新 skill

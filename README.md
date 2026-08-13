@@ -1,6 +1,6 @@
 # Owl's Skills 🦉
 
-我的 Claude Code 自用 skill 集合包。
+我的agent自用skill集合包。
 
 ## 已收录
 

@@ -49,7 +49,7 @@
 
 ## B 站发现型推荐：高密度包装
 
-当视频目标是让观众发现一款陌生游戏、浏览月度新游或做促销选购时，可使用更口语、更高密度的结构。详细样本与适用边界见 [su-anan-patterns.md](su-anan-patterns.md)。
+当视频目标是让观众发现一款陌生游戏、浏览月度新游或做促销选购时，可使用更口语、更高密度的结构。详细样本与适用情况见 [su-anan-patterns.md](su-anan-patterns.md)。
 
 ### 标题三段分工
 
@@ -102,7 +102,7 @@
 - 让标题与封面共同组成完整句子。例如标题问“为什么停不下来”，封面给出“刮卡肉鸽”。
 - 在上传前检查缩小到 25% 时，主文案、游戏名与视觉焦点仍可辨认。
 
-## 来源与使用边界
+## 来源与使用限制
 
 - YouTube Help, [Thumbnail & title tips](https://support.google.com/youtube/answer/12340300?hl=en)：标题应准确、简短，重点词前置；可在“可搜索”和“引发好奇”两类标题间选择。
 - YouTube Help, [A/B test titles & thumbnails](https://support.google.com/youtube/answer/16391400?hl=en)：可通过标题与缩略图组合的观看时长而不只点击量比较方案。

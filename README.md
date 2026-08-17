@@ -15,6 +15,7 @@
 | [language-defaults](language-defaults/README.md) | `/language-defaults` | 语言默认值分析器 — 英汉语法默认值认知差异框架，五种分析模式 |
 | [excel-edit](excel-edit/README.md) | `/excel-edit` | 安全编辑 Excel 工作簿 — 依赖图驱动的事务式编辑器，原生 Excel 验证，五级保护 |
 | [game-video-prod](game-video-prod/README.md) | `/game-video-prod` | 游戏评测与推荐视频全流程生产 — 风格研究、脚本、标题、封面与 HyperFrames 合成渲染 |
+| [godot-shader](godot-shader/README.md) | `/godot-shader` | Godot 4.X Shader 中文手册 — 22章从基础到3D特效，查配方、确认语法即用 |
 
 > 每个 skill 目录内有详细的 README 说明。点上面的 skill 名称查看。
 

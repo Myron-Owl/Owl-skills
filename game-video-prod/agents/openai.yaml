@@ -1,4 +1,4 @@
 interface:
   display_name: "Game Video Production"
-  short_description: "Research, script, package, and render game videos"
-  default_prompt: "Use $game-video-prod to research the relevant video style, write an evidence-backed game review or recommendation script, generate three title-and-cover packages with platform-appropriate horizontal or vertical layouts, and composite the final video with HyperFrames."
+  short_description: "Position, plan, package, and render game videos"
+  default_prompt: "Use $game-video-prod to define the channel fit and content format, then create an evidence-backed game video with titles, covers, and a platform-appropriate final cut."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "知乎短篇小说写作"
+  short_description: "设计、起草与精修 8000–25000 字知乎式短篇故事"
+  default_prompt: "Use $zhihu-short-fiction to design an original 8000–25000 Chinese-character short story for Zhihu readers."

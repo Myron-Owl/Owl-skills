@@ -58,7 +58,7 @@ gdd-writer/
 ├── SKILL.md                       # 技能入口、执行流程与硬性边界
 ├── README.md                      # 本文件
 ├── references/
-│   └── 策划文档规范.md             # v2.0 完整规范镜像
+│   └── 策划文档规范.md             # v2.2 完整规范镜像
 └── examples/
     └── system_属性体系示例.md       # 示例：系统设计文档
 ```

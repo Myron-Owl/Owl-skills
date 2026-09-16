@@ -1,0 +1,4 @@
+interface:
+  display_name: "lmeeting · 游戏项目会议"
+  short_description: "支持玩法、美术、技术、排期、试玩与复盘会议，从客观问题推进解决方法和行动"
+  default_prompt: "使用 $lmeeting 帮我筹备游戏项目会议，按本次目的安排议程，从客观约束和实际分歧中发现问题，形成决定、验证任务与可验收行动。"

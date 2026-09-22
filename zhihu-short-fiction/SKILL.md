@@ -26,6 +26,7 @@ description: 面向知乎、盐言故事及相近移动阅读场景，设计、�
 - 用户提供已有稿件：先诊断主要瓶颈，再局部改写；未经要求不要把作者声音统一成模板腔。
 - 用户要求平台研究、趋势或投稿规则：先读 [research-protocol.md](references/research-protocol.md) 和 [platform-patterns.md](references/platform-patterns.md)，区分作品样本、作者经验与官方政策。
 - 用户要求某类型：读 [genre-engines.md](references/genre-engines.md)。
+- 用户需要桥段灵感、把网文标签转成剧情或识别结构重复：按需查 [webnovel-patterns.md](references/webnovel-patterns.md) 的 8 类 48 种母型，再用 [webnovel-composition.md](references/webnovel-composition.md) 的组合方法与诊断。它们是工作分类，不是平台规则；原文长篇方法按短篇篇幅与闭环要求取用。
 - 用户需要精确字数、分场或节奏：读 [story-architecture.md](references/story-architecture.md)。
 - 用户要求审稿、降 AI 味或修逻辑：读 [revision-rubric.md](references/revision-rubric.md)。
 
@@ -57,6 +58,8 @@ description: 面向知乎、盐言故事及相近移动阅读场景，设计、�
 
 ### 5. 按因果链排场
 
+先区分题材、初始设定、核心追求、桥段母型、具体桥段与阅读效果；“重生”或“打脸”本身不是情节。调用母型时，写出“初始处境 → 触发事件 → 有阻力的行动 → 局势变化 → 后续影响”，按因果串联、同场叠加、价值对撞或镜像复现组合，避免随机拼接。母型数量不等于主线数量。
+
 每场至少回答四件事：谁想要什么、什么阻止他、他做了什么选择、局面因此怎样改变。用“因此/但是”连接相邻场景；若只能用“然后”，多半是事件堆叠。
 
 按目标字数套用 [story-architecture.md](references/story-architecture.md) 的档位。开头尽快给出异常与具体代价，但允许题材决定速度；不要用固定 100 字规则替代判断。
@@ -78,7 +81,7 @@ description: 面向知乎、盐言故事及相近移动阅读场景，设计、�
 
 ### 8. 完成双轮修订
 
-第一轮只修结构：删掉不改变关系、信息或风险的场景，补因果和伏笔。第二轮再修语言：删除重复解释、空泛情绪、副词堆叠和同质化对白。按 [revision-rubric.md](references/revision-rubric.md) 打分；任一硬性失败项未解决，不宣称“可投稿”。
+第一轮只修结构：删合既不推进目标、关系、信息或风险，也不承担具体情绪兑现和后果呈现的场景，补因果和伏笔；保留有价值的日常与余韵。检查目标、阻力、行动、代价、回报、后果是否结构性重复，并让既有成果进入后续。第二轮再修语言：删除重复解释、空泛情绪、副词堆叠和同质化对白。按 [revision-rubric.md](references/revision-rubric.md) 打分；任一硬性失败项未解决，不宣称“可投稿”。
 
 ## 默认交付格式
 

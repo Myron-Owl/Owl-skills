@@ -10,7 +10,7 @@
 | [mao-thought](mao-thought/SKILL.md) | `/mao-thought` | 毛泽东思想分析框架 — 将实事求是、矛盾论等方法论应用于现代问题分析 |
 | [wealth-master](wealth-master/README.md) | `/wealth-master` | 全周期理财大师（2026中国版）— 五阶段财富框架，从0到2000万+ |
 | [reality-tunnel](reality-tunnel/README.md) | `/reality-tunnel` | 现实隧道分析器 — 受 Robert Anton Wilson 启发的认知决策工具 |
-| [gd-master](gd-master/README.md) | `/gd-master` | 全球游戏设计大师知识库 + 六透镜分析引擎 — 收录23位大师的设计哲学 |
+| [game-designer](game-designer/README.md) | `/game-designer` | 游戏设计师 — 大师知识库、六透镜分析、机制设计与平衡测试 |
 | [gdd-writer](gdd-writer/README.md) | `/gdd-writer` | GDD 策划文档撰写 — 按规范生成 CC战棋 项目策划文档 |
 | [language-defaults](language-defaults/README.md) | `/language-defaults` | 语言默认值分析器 — 英汉语法默认值认知差异框架，五种分析模式 |
 | [excel-edit](excel-edit/README.md) | `/excel-edit` | 安全编辑 Excel 工作簿 — 依赖图驱动的事务式编辑器，原生 Excel 验证，五级保护 |

@@ -2,7 +2,7 @@
 
 ## 用途与来源
 
-本参考把 Game Maker's Toolkit 的视频《The 100 Games That Taught Me Game Design》归纳为可检索的设计技巧。它是 `gd-master` 的跨游戏案例库，不是新的大师透镜。
+本参考把 Game Maker's Toolkit 的视频《The 100 Games That Taught Me Game Design》归纳为可检索的设计技巧。它是 `game-designer` 的跨游戏案例库，不是新的大师透镜。
 
 - 一手文本：用户提供的完整 VTT 字幕，共 1427 个字幕段，时长约 2 小时 12 分。
 - 原视频：[YouTube](https://www.youtube.com/watch?v=gWNXGfXOrro)

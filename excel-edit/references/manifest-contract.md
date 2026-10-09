@@ -1,5 +1,7 @@
 # Workbook manifest contract
 
+Optional strict-audit resource for a scoped multi-file, migration or strict-preservation transaction. Ordinary fixed edits use edit-plan.md and do not need this manifest or its reports. The requirements below apply only when this full-manifest workflow is selected for a concrete reason.
+
 ## Purpose
 
 Use one JSON manifest for each dependency set. It declares authority, edit scope, calculation truth, and acceptance criteria before any write occurs. Copy `assets/workbook_manifest.example.json` and replace every placeholder.
@@ -11,7 +13,7 @@ Use one JSON manifest for each dependency set. It declares authority, edit scope
 - `entry_workbook`: final or primary dependent workbook.
 - `dependency_order`: every workbook in source-to-dependent opening order; include the entry workbook.
 - `targets`: workbooks permitted to change.
-- `ranges`: four scope maps keyed by workbook name.
+- `ranges`: five scope maps keyed by workbook name.
 - `link_policy`: portability and absolute-path rules.
 - `calculation`: native calculation and timeout requirements.
 - `acceptance`: representative cells, expected values or predicates, error scan, and relocation rules.
@@ -59,7 +61,9 @@ Set `strict_no_absolute_paths` separately. It is stronger than portability and r
 Run:
 
 ```text
-python scripts/validate_manifest.py path/to/workbook_manifest.json
+scripts/excel-python.cmd -B scripts/validate_manifest.py path/to/workbook_manifest.json
 ```
 
 The validator checks schema shape and common contradictions. It does not prove that ranges exist inside the workbooks or that business expectations are correct.
+
+The linked-delivery example must be adapted to the actual contract. It is not fixed-editor input; see [strict-audit.md](strict-audit.md).

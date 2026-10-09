@@ -1,79 +1,33 @@
-# Native edit transaction
+# Native editing and scoped extensions
 
-## Preflight
+Use scripts/edit_native.py for supported fixed-position edits. It uses pywin32, its own Excel instance, read-only sources and a verified staged copy. Do not rewrite this workflow per workbook or run the old PowerShell preflight against the Python executor.
 
-Record:
+Read this for insertion/deletion/moves, style inheritance, table/rule/name changes, array/spill edits, refresh, signatures or custom multi-file transactions. Fixed edits across files use edit_batch.py and reading-and-recovery.md.
 
-- Absolute paths for formal inputs, temporary workspace, backups, and outputs.
-- File hashes, sizes, modified times, lock state, and read-only attributes.
-- Microsoft Excel version, calculation mode, automation runtime, and PowerShell/text encoding.
-- Dependency direction and opening order.
-- Macro policy before the first programmatic open.
-- Whether links may update and whether external data refresh is in scope.
+Before building a custom script, check [common operations](common-operations.md). An unsupported local format/rule operation should supply prepare/apply/verify_native methods to edit_native.execute(plan, extension). prepare changes only expected in-memory formats/rules; apply performs those declared native changes; verify_native checks the result before commit. The shared executor owns saving, merged-wrap recovery, reopening, preservation, concurrency checks and replacement. It rejects prepare changes to values, formulas, sheet structure or dimensions. Do not use this local interface for row/column moves, table redesign or arbitrary file writes.
 
-For Windows PowerShell scripts containing non-ASCII workbook or sheet names, validate parsing before native execution. Windows PowerShell 5 may decode a UTF-8 file without BOM as the local code page. Prefer a BOM-capable file or load explicitly with `Get-Content -Raw -Encoding UTF8` and `ScriptBlock.Create`. A successful parse check must fail the command on parser errors; do not print a success marker after a non-terminating parser error.
+## Bound the extension
 
-Create a separate Excel application instance. Capture application settings before changing them and restore them in `finally`.
+Identify affected files/records/ranges/properties and relevant source-to-target dependencies. Prefer existing reserved cells over structural insertion where appropriate. Inserting/moving data requires checking formulas, names, table/validation/conditional-format extents and business boundaries.
 
-Before requesting a native session, run `../scripts/preflight_excel_payload.ps1`. The offline gate must parse and lint the automation script, validate the manifest, verify compiled block dimensions, check representative generated formulas and boundary math, and serialize both success and failure reports. Native Excel should discover workbook behavior, not basic builder syntax or matrix-count errors.
+Declare spill anchors/extents, check collisions and verify size/results. Legacy arrays require their intended whole array range and correct formula interface. Style inheritance uses an identified same-kind data row and only intended components; never title styles or automatic whole-sheet resizing.
 
-## Safe application state
+Before opening query/connection workbooks, establish allowed refresh/execution and completion checks. UpdateLinks=0 only controls workbook links. Signatures/encryption require their actual edit consequence/credentials to be resolved; do not remove protection to make a generic script work.
 
-For the edit phase, normally set:
+## Native state and performance
 
-- `ScreenUpdating = false`
-- `EnableEvents = false`
-- `DisplayAlerts` according to the explicit policy; never use it to bypass security decisions
-- `Calculation = manual`
-- `AutomationSecurity = force-disable` for untrusted or non-macro tasks
+Use DispatchEx, never the user's active instance. Disable macros/events before opening target/source files. A blank anchor workbook establishes manual calculation before file opening; set CalculateBeforeSave=false during batching. Track owned objects and close/restore/quit in finally.
 
-Open at least one workbook before changing `Application.Calculation`. Some Excel/COM versions return `0x800A03EC` when calculation mode is set on an otherwise empty application instance. Capture and change calculation mode after the dependency workbooks are open.
+Suppress ordinary prompts only for task-owned staged saves after conflict checks, not to decide security matters. Address workbooks/sheets explicitly and use bounded two-dimensional block writes. No save/calculate inside loops. Formula2, Formula and FormulaArray have different semantics.
 
-Do not assume disabling screen updates suppresses macro security warnings. Set automation security immediately around programmatic opens and restore the previous value afterward.
+For permitted local workbook-link calculation, open required sources first and calculate from live cells. This machine can reject redundant UpdateLink calls on open sources. Do not repeat them when declared-source calculation supplies verified results.
 
-## Open order
+## Save and recovery
 
-Open upstream sources first and downstream/entry workbooks last. Use explicit link-update arguments. Keep source dependencies read-only unless the manifest lists them as targets.
+Use smart calculation first. Full/rebuild requires an identified problem. If a COM method hangs, recover only the task-owned process; do not launch repeated new instances or kill all Excel processes.
 
-Do not use active workbook or active sheet as an implicit target. Resolve every workbook, sheet, and range by exact identity.
+Prefer SaveCopyAs beside the original. Ensure temporary manual calculation settings do not become the user's workbook policy: the fixed editor preserves original calcPr metadata in the staged file, then reopens without saving. Never save native/linked workbooks using openpyxl.
 
-## Writes
+For multi-file commits, stage/verify every target and preserve a coherent recovery set; independent file replacements are not an atomic transaction. Keep workbooks closed and stop on concurrent changes.
 
-Compile an edit payload before touching Excel. Each operation must declare workbook, sheet, range, write kind, dimensions, and expected old evidence.
-
-Use rectangular two-dimensional arrays for contiguous blocks. Verify that payload dimensions equal target dimensions. Test single-row and multi-row matrix paths independently when using COM/PowerShell.
-
-For dynamic blocks, verify header count, every populated row count, reserved-row count, and the final A1 target range from the same compiled payload. Avoid maintaining a range endpoint separately from the data count when it can be derived.
-
-Separate value blocks from formula blocks where possible. Normalize values crossing the automation boundary to string, Boolean, number, date serial/date, or null as intended.
-
-When generating formulas with PowerShell interpolation, delimit variables adjacent to `:` or letters. For example, use `"D${r}:S${r}"`, not `"D$r:S$r"`; the latter can be interpreted as scoped-variable syntax and silently become a valid but shortened Excel range. Before the full write, test one generated formula and assert its expected literal ranges. After the write, read the formula back from Excel and repeat the assertion at the first, boundary, representative middle, and last rows.
-
-Use the smallest known range for structural operations. Do not call `Cells.UnMerge()` merely to replace a title. Unmerge the exact title range or enumerate known merge areas. Treat data-validation COM calls as fragile: specify the complete operator and required bounds, test one cell first, and use workbook formulas for business validation when interactive validation adds no material value.
-
-Do not calculate or save inside row/cell loops. Finish writes, then calculate once at the required level.
-
-## Calculation
-
-For dependency-sensitive edits:
-
-1. Restore automatic calculation if the workbook contract requires it.
-2. Update permitted workbook links.
-3. Invoke `CalculateFullRebuild` when formulas, names, dependencies, external links, or calculation versions may have changed.
-4. Poll `Application.CalculationState` until `xlDone`.
-5. Treat timeout as `FAIL_NATIVE`; do not save a potentially partial calculation.
-6. Scan error cells and declared acceptance cells before commit.
-
-`CalculateFullRebuild` applies to all open workbooks and rebuilds dependencies. Keep the application instance isolated so unrelated user workbooks are not included.
-
-## Commit and cleanup
-
-Save only declared targets, normally once. Record saved file hashes. Close the entry workbook, then read-only dependencies. Quit Excel, release automation objects in reverse ownership order, and confirm no target file remains locked.
-
-Restore captured application settings even on failure. Do not terminate unrelated Excel processes.
-
-Suppress meaningless COM return values such as `True` with `[void]` so diagnostic output remains readable. Track a named transaction stage such as `open_workbooks`, `write_sheet`, `calculate`, `save`, or `reopen`; on failure report the stage, workbook, sheet/range, operation, HRESULT/message, and script stack in the same run.
-
-## Reopen
-
-Use a fresh isolated Excel instance for verification. Open formal files read-only. Test with source files closed when the acceptance contract requires closed-source behavior. Do not save verified formal files during this phase.
+Apply [validation-and-rollback.md](validation-and-rollback.md) selectively. [manifest-contract.md](manifest-contract.md) is optional for complex scoped transactions. [powershell-com-formula-pitfalls.md](powershell-com-formula-pitfalls.md) applies only to custom PowerShell COM automation.

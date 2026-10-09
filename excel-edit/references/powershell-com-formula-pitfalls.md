@@ -1,5 +1,7 @@
 # PowerShell, COM, and generated-formula pitfalls
 
+This reference and its offline gate apply only to custom PowerShell COM scripts. Routine fixed Python editors do not run this gate or generate its reports.
+
 Use this reference for native Excel automation from Windows PowerShell, especially when formulas or links are generated dynamically.
 
 ## Encoding and execution

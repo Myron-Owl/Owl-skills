@@ -1,120 +1,77 @@
 ---
 name: excel-edit
-description: Safely inspect, create, edit, recalculate, validate, and deliver Microsoft Excel workbooks, especially existing .xlsx/.xlsm files with dense formula chains, cross-sheet formulas, cross-workbook links, named ranges, shared or dynamic formulas, macros, data connections, or strict preservation requirements. Use for Excel changes that require native Microsoft Excel truth, minimal targeted edits, dependency-aware opening, formula/link regression checks, OOXML package auditing, rollback, relocation testing, or a machine-readable workbook manifest. Do not use for game-design balancing or project-specific numeric design rules.
+description: Safely edit existing Excel values, formulas, colors and scoped worksheet extensions while preserving unrelated content. Use lightweight edits for ordinary formula-free XLSX and native Microsoft Excel for formulas, links or VBA. Scale verification to the change; use strict audit for declared whole-scope protection, migration or linked-package delivery.
 ---
 
 # Edit Excel Workbooks
 
-Treat an Excel edit as a transaction over a dependency graph, not as a cell-writing task. Preserve the original file, make the smallest authorized change, and use Microsoft Excel as the calculation oracle whenever workbook behavior matters.
+Edit only requested cells and properties. Choose the engine from file features and the checks from what changes. A complex workbook does not automatically require a full audit.
 
-## Route Before Acting
+## Select the verification scope
 
-Read [references/tool-routing.md](references/tool-routing.md), classify the task, and record the selected route in the edit plan.
+Choose editing engine and verification scope independently. Formulas, workbook links and VBA require native Excel; their presence alone does not require a full audit.
 
-Use native Microsoft Excel editing when any condition applies:
+- **Routine editing (default):** fixed values/formulas/colors and supported formatting, validation, append blocks and new sheets. Use existing executors and checks proportional to affected data/properties/results. No full manifest, package-wide audit, relocation test, screenshot or separate report by default.
+- **Strict audit:** declared whole-scope protection/audit evidence, linked-workbook migration or portable package delivery, strict zero-absolute-path metadata, or a custom transaction needing full dependency/protection/recovery contracts. Read [strict-audit.md](references/strict-audit.md). Keep supported writes on the existing editor and verify additional contract evidence on the candidate before authoritative replacement.
 
-- The workbook contains cross-workbook formulas, macros, Power Query, Power Pivot, a data model, external connections, shared formulas, dynamic arrays, or modern functions whose serialization may be tool-specific.
-- The task must preserve cached values, external-link relationships, calculation behavior, or Excel-native results.
-- The user requires exact compatibility with Microsoft Excel, strict protected ranges, or a portable multi-workbook package.
+Queries, models, ActiveX, signatures, encryption and unsupported structural operations need a scoped native workflow. Resolve actual refresh/execution/preservation requirements; unsupported features do not justify weaker tools or auditing unrelated content. Read only relevant references. Select routes within existing authorization; ask only about real conflicts, missing required information, scope changes or actual permissions.
 
-Use a standalone workbook library only for low-risk new workbooks or explicitly accepted structure-only operations. Never silently downgrade a native-required task. If native validation is unavailable, return `PASS_STRUCTURE_ONLY` at best, never `PASS_NATIVE`.
+## Environment
 
-## Load Only Needed References
+Use [scripts/excel-python.cmd](scripts/excel-python.cmd) for every Python script and package operation in this skill; never bare python, py or pip. Read [references/python-runtime.md](references/python-runtime.md) only for setup/troubleshooting. The current interpreter has openpyxl and pywin32; Codex updates can change its path or packages.
 
-- For every edit, read [references/manifest-contract.md](references/manifest-contract.md).
-- For native or linked-workbook edits, read [references/native-edit-transaction.md](references/native-edit-transaction.md).
-- For delivery, strict protection, external links, or recovery, read [references/validation-and-rollback.md](references/validation-and-rollback.md).
-- For PowerShell/COM automation, generated formulas, merged-cell or validation edits, or strict relative-link cleanup, read [references/powershell-com-formula-pitfalls.md](references/powershell-com-formula-pitfalls.md).
-- For cell content, tables, validation, layout, reserved rows, batch edits, or delivery-directory decisions, read [references/workbook-content-and-delivery.md](references/workbook-content-and-delivery.md).
-- For provenance or disputed technical behavior, read [references/technical-sources.md](references/technical-sources.md).
+Before preparing the first native edit in a task, run `excel-python.cmd -B check_runtime.py --native` using the absolute script paths. This checks imports without starting Excel. Reuse a successful check within that task; rerun after a runtime/package change or import failure. Missing pywin32 is an environment problem: repair the configured interpreter within authorization, rather than spending time rewriting the editor in PowerShell. Native execution also fails early with structured runtime diagnostics. On this Windows host, use the available application permission escalation for native Excel calls; an 80070520 startup failure needs permission/session diagnosis, not another script language.
 
-## Establish the Contract
+## Routine workflow
 
-Before editing, create or complete `workbook_manifest.json` from [assets/workbook_manifest.example.json](assets/workbook_manifest.example.json). Validate it with:
+1. Identify the authoritative file, sheet, records and allowed properties. Resolve the current workspace path internally; a same-named backup on another drive is not the target. Use [read_workbook.py](scripts/read_workbook.py) for bounded summaries/ranges; see [reading and recovery](references/reading-and-recovery.md). Resolve IDs before writing; use exact before-values or additional preconditions to catch stale mappings. Check uniqueness or referenced IDs only if this edit depends on them.
+2. For edits, run `read_workbook.py --for-edit` at the first read, before preparing scripts. If replacement is unavailable, notify the user early and continue independent read-only preparation; recheck at commit. Choose the engine using [references/tool-routing.md](references/tool-routing.md). Native engine selection for an authorized edit does not require another user confirmation. Actual filesystem/application permissions still apply.
+3. For fixed-position value/formula/color edits, use the tested executor and small [edit plan](references/edit-plan.md). Prefer rectangular operations over per-cell COM calls. Keep this internal JSON in temporary workspace; do not ask the user to author it or present it as an audit manifest.
+4. Executors check targets, write a temporary copy beside the original, save once, reopen and verify affected data/styles, and replace the original only after success and a concurrent-change check. Native mode also reopens with sources closed and checks unchanged formulas/link destinations. Failures leave the original in place. An available failed staged copy is retained with bounded differences; inspect it before retrying. It is not a deliverable. After successful completion, remove only this task's diagnosed failure copies.
+5. Deliver clickable file names: `[装备表](<F:/actual/path/装备表.xlsx>)`. Put the actual absolute path in the link target only. Do not routinely print absolute paths, cell addresses or before/after lists; provide those only when requested or needed to explain a conflict. Briefly state completion and any material calculation/recovery limitation. Stop when required checks pass. No routine screenshots, PDFs, backup inventory, package audit, hash inventory or separate validation report; provide explicitly required strict-audit evidence.
 
-```text
-python scripts/validate_manifest.py workbook_manifest.json
-```
+## Visual checks
 
-Before starting Microsoft Excel, run the deterministic offline gate in `scripts/preflight_excel_payload.ps1` against the automation script, manifest, and compiled write payload when available. On Windows systems that block direct `.ps1` execution, load it explicitly with `Get-Content -Raw -Encoding UTF8` and `ScriptBlock.Create`. Do not request or start a native Excel session until the gate returns `PASS_OFFLINE_PREFLIGHT`.
+Value, formula and color-only edits do not generate screenshots, PDFs or PNGs by default. New sheets or substantial layout changes may justify one visual check of the affected region when actual readability is uncertain. Reuse that preview; repeat only for a concrete remaining visual defect. Prefer a range/screen preview. PDF pagination, fitting to one printed page and print-layout polishing require a printing/PDF requirement; “match the existing appearance” alone does not imply that requirement. If PDF is merely a convenient preview transport, inspect readability without changing print settings or adding pagination requirements. Visual previews never replace formula/style checks.
 
-Require explicit values for:
+## Property preservation
 
-- Entry workbook and complete dependency opening order.
-- Editable, expandable, formula-structure-protected, result-protected, and strictly protected ranges.
-- Link policy and whether relocation or strict no-absolute-path testing is required.
-- Calculation mode, acceptance cells, and business checks.
-- Macro policy, save permission, backup path, and timeout.
+- Content edits change only contents. Font-color edits change only that color; fill edits set a solid fill. Preserve font size/name/emphasis, borders, number format, alignment/wrapping, row heights, column widths and merges unless requested.
+- Do not auto-fit, redesign, replace a whole font for a color change, or rebuild a sheet. When adding records requires style inheritance, use an identified same-kind data row in a scoped extension, never a title style.
+- Conditional formatting can override visible colors. Fixed editors stop on conflicting color targets; inspect the rule before deciding whether to edit static color or the rule. Do not delete rules to force a color.
+- Keep leading-zero IDs and literal text beginning with = as strings. Keep blanks, zero, false and formula-empty results distinct. Formula edits use formula operations, not values-only export.
+- Filling existing reserved fixed cells is supported. Inserting rows, copying styles or resizing objects is not silently inferred from a content edit.
 
-If a high-risk field is unknown, perform read-only discovery first. Do not infer a writable range or permission to save.
+## Calculation and checks
 
-## Execute the Transaction
+Small internal-formula files use the same native executor with `dependencies=[]`, `update_links=false`, one session and smart calculation only when results need updating. Do not build a custom transaction merely because internal formulas exist. Read only relevant ranges and load only the needed reference, not every script or legacy checklist. Use the existing fixed editor for inputs/formulas/colors and its optional [append_block](references/edit-plan.md) for supported small additions.
 
-Use this fixed sequence:
+Scale checks to the change: an input-only edit needs requested values, representative dependent results and preservation checks; unchanged formulas do not need another independent model derivation, boundary suite or fill-down exercise. Test new formula logic when introduced; repeat those checks only when that logic changes or evidence warrants it. Compare resolved styles and effective validation behavior, not raw style IDs or XML ordering. `dimension_signature` in edit_common.py supports dimension/style comparisons. Do not introduce another save/reopen or screenshot after the required checks pass.
 
-1. **Preflight** — confirm files, locks, target Excel version, runtime paths, encoding, permissions, macro policy, dependency order, and available disk space.
-2. **Inventory** — capture sheets, names, tables, formulas, links, protected-range baselines, file hashes, and package structure. Run `scripts/inspect_xlsx_package.py` for `.xlsx` or `.xlsm` inputs.
-3. **Dry run** — compile the user request into [assets/edit_plan.example.json](assets/edit_plan.example.json) and, for generated block writes, a machine-checkable payload. List every intended write and every range that must not change.
-4. **Offline preflight** — parse and lint automation scripts; validate the manifest; assert every payload matrix against its target range; test dynamic headers, single-row and multi-row blocks, formula tokens, zero/negative/blank boundaries, and failure-report serialization. Stop before Excel on any failure.
-5. **Backup** — create recoverable copies outside the formal delivery set and verify their hashes.
-6. **Native session** — start an isolated Microsoft Excel instance; do not attach to the user's unrelated interactive instance. Set macro security before programmatic opens.
-7. **Open dependencies** — open source workbooks before dependent workbooks, using the manifest order. Keep non-target dependencies read-only unless explicitly writable.
-8. **Edit** — disable events, screen updating, and automatic calculation temporarily. Write contiguous value and formula blocks as correctly sized two-dimensional matrices. Keep values and formulas in separate writes when practical. Avoid repeated saves and recalculations.
-9. **Recalculate** — update permitted links, call full dependency rebuild when required, wait until calculation state is done, then scan errors and acceptance cells.
-10. **Commit** — save only authorized target workbooks, normally once. Close all workbooks, quit the isolated Excel instance, release automation objects, and confirm locks are gone.
-11. **Reopen verification** — reopen the formal files read-only, with source files closed where the contract requires it. Recheck formulas, links, acceptance results, and protected ranges. Do not save during this phase.
-12. **Relocation/package verification** — when required, copy the entire dependency set to a different directory and repeat read-only verification. Audit the OOXML package after the last writable save.
-13. **Report or rollback** — emit [assets/validation_report.example.json](assets/validation_report.example.json). On failure, follow the rollback order exactly.
+Color-only edits use no calculation, no source opening and no link refresh. Local property comparisons usually replace screenshots.
 
-## Preserve Formula Semantics
+Input/formula edits requiring updated results use native smart calculation, the relevant declared source chain and expected business result cells. Formula preservation is not proof of cache freshness. Missing required sources must be reported without claiming successful result validation.
 
-- Keep derived results as formulas. Keep assumptions and mapping rules visible and auditable.
-- Use stable IDs or explicit mapping tables; do not depend on incidental row order.
-- Separate the lookup domain from the current-record domain. For an appendable ID registry, use an Excel Table, dynamic named range, or whole-column lookup when performance is acceptable; do not hard-code the current last row into downstream lookups. Keep business counts and acceptance checks limited to live records identified by stable IDs or status.
-- Distinguish true blank, formula `""`, numeric `0`, and lookup failure.
-- Do not use a bare reference for an optional field when blank must remain blank; use an explicit blank-preserving formula such as `=IF(Source!A1="","",Source!A1)`.
-- Treat A1 formula text, R1C1 pattern, cell kind, cached value, style/number format, and shared-formula metadata as separate evidence.
-- Re-read first, boundary, representative middle, and last formulas after Excel saves contiguous formula blocks.
-- For programmatically generated formulas, assert expected range tokens and business predicates after write. A syntactically valid shortened range is still a failed edit.
-- Validate admissibility rather than equality to a default. A valid explicit override such as `0` must not fail merely because most rows inherit `1`. Test completeness, allowed range, fallback use, and override legality as separate predicates.
-- Declare the rounding stage for every multi-layer formula chain. Do not round an intermediate layer unless the workbook contract explicitly requires it; test reference reproduction with zero, negative, blank, and boundary inputs before native execution.
-- Never copy an OOXML external-link index such as `[1]` or `[3]` into a new formula. Resolve and write the real workbook name.
-- Do not use formula-bar appearance alone as proof that an external link is healthy.
+The native executor compares unchanged formulas in memory and checks link targets without per-cell COM formula audits. Full calculation/rebuild needs an identified reason. Relocation tests require a relocation requirement. See [references/validation-and-rollback.md](references/validation-and-rollback.md).
 
-## Protect Existing Content
+## Scoped extensions
 
-Classify every relevant cell into one of four scopes:
+Use optional [format_copies and validations](references/common-operations.md) for selected cell formatting inheritance or whole/decimal/custom single-cell input rules. These run through the same native transaction. For genuinely unsupported local format/rule behavior, use the documented execute(plan, extension) interface rather than rewriting save/check/replace code.
 
-- `editable`: value, formula, or format may change as declared.
-- `expandable`: formulas, validation, conditional formatting, tables, or lookup ranges may extend as declared.
-- `formula_structure_protected`: formula text/pattern, formula/constant kind, and declared style evidence must remain equal; cached or displayed results may change through approved upstream recalculation.
-- `result_protected`: business result must remain equal; approved formula implementation changes are allowed.
-- `strict_protected`: value, formula text, formula/constant kind, blank state, and declared formatting evidence must remain equal.
+For new worksheets with selected format inheritance, use the native plan's [new_sheets contract](references/new-sheets.md). Combine it with input edits and one existing-sheet append_block for instructions. Do not recreate save/reopen/preservation scripts for supported operations. Read executor source only to debug a demonstrated problem or implement unsupported behavior.
 
-Compare strict-protected cells individually after the native save. Aggregate totals or a few samples are insufficient.
+For fixed edits to multiple workbooks, use [edit_batch.py](scripts/edit_batch.py) with the [recovery contract](references/reading-and-recovery.md). It provides guarded recovery for caught failures, not atomic saving. One-file edits retain the normal lightweight workflow.
 
-## Fail Safely
+Insertion/deletion/moves, sorting, table/name/rule changes, spill or legacy-array target edits, query refresh, signatures and encryption require scoped native work. Read [references/native-edit-transaction.md](references/native-edit-transaction.md) and relevant [content guidance](references/workbook-content-and-delivery.md). Do not fall back to openpyxl to evade unsupported features.
 
-Use these terminal states:
+The [strict audit workflow](references/strict-audit.md) combines manifest/package-audit/recovery evidence for actual migration, strict-preservation or complex custom transactions. Read [manifest-contract.md](references/manifest-contract.md) only for that purpose and [PowerShell pitfalls](references/powershell-com-formula-pitfalls.md) only when writing custom PowerShell COM code.
 
-- `PASS_NATIVE` — native edit, full required calculation, reopen, protection, link, and relocation checks passed.
-- `PASS_STRUCTURE_ONLY` — package and formula-text checks passed, but native truth was unavailable.
-- `WARNING_TOOL_LIMITATION` — a tool could not evaluate a feature; no success claim is implied.
-- `FAIL_BUSINESS` — formulas or results violate the declared business checks.
-- `FAIL_STRUCTURE` — package, relationship, range, or serialization checks failed.
-- `FAIL_NATIVE` — Microsoft Excel repaired, rejected, miscalculated, timed out, or failed reopening the workbook.
-- `ROLLED_BACK` — formal files were restored and their backup hashes verified.
+Ask only for unresolved conflicts, missing information needed for results, changes in scope, or actual permissions. Reuse authorization already given. Editing does not authorize SVN, downstream export or external sending.
 
-Never leave a half-completed workbook in the formal delivery directory. Never overwrite a locked workbook during rollback.
+Native formula comparison accepts equivalent worksheet quoting without changing string literals, addresses or operators. New-sheet row heights and widths are checked through Excel after reopening, because package values can use different representations. All native edits can restore the proven loss of wrapping on untouched merged anchors before reopening; unrelated differences still fail. The shared native transaction checks old page settings and validation metadata before replacement; declared validation edits compare effective rules. See [native compatibility](references/native-compatibility.md) only for failures or maintenance.
 
-## Completion Gate
+## Skill maintenance
 
-Finish only when all required evidence exists:
+Use the smallest relevant development test from [maintenance cases](references/maintenance-cases.md). Documentation-only changes do not run Excel. Operation changes run the affected reusable case; changes to saving/repair/commit also run an ordinary native case and the relevant failure checks. Run the full external-link suite only when formula/link/calculation/session or broad transaction changes can affect it. Existing passed tests do not need repeating without a new change or failure. Never run development suites as part of ordinary workbook delivery.
 
-- Intended writes match the dry-run plan.
-- Unmodified and protected scopes pass their declared comparison level.
-- Formula error scan is clean or every allowed exception is listed.
-- External links resolve under the declared source-closed and relocation conditions.
-- Microsoft Excel completes calculation before timeout, saves without repair, closes, and reopens cleanly when native validation is required.
-- Visual inspection covers all affected user-facing sheets.
-- The report states the exact validation tier and known limitations.
+Native timings distinguish execution from planning/diagnosis. Inspect them when investigating slowness, not as a routine user report. Use the skill format validator after metadata changes.

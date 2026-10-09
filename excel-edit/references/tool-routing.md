@@ -1,42 +1,18 @@
-# Tool routing
+# Engine selection
 
-## Decision table
-
-| Condition | Required route | Permitted supporting tools |
+| Situation | Route | Routine verification |
 |---|---|---|
-| Existing workbook with cross-workbook formulas | Native Microsoft Excel session | Read-only OOXML inspection, diff scripts |
-| `.xlsm`, VBA, Power Query, Power Pivot, data model, external data connection | Native Microsoft Excel session | Read-only inventory tools |
-| Must preserve link relationships or cached values | Native Microsoft Excel session | Package audit before and after |
-| Dense modern formulas, dynamic arrays, shared formulas | Prefer native Microsoft Excel; native validation mandatory | Structure-only formula inspection |
-| Small text/style edit in a complex linked workbook | Native Excel or audited surgical OOXML patch | Never full third-party import/export without proof |
-| New simple workbook without links, macros, model, or native parity requirement | Standalone authoring is allowed | Native final calculation when formulas matter |
-| Read-only question or audit | Read-only inspection | Do not save or export unless requested |
-| Exact OOXML node change with known package part | Surgical package patch after backup | Native read-only reopen and package diff |
+| Ordinary formula-free .xlsx, fixed values/static colors | scripts/edit_simple.py | Before-values, saved local values/types/styles/dimensions |
+| Formulas or workbook external links, including color-only edits | scripts/edit_native.py | Local checks, unchanged formulas/link targets and native reopen; calculation only if needed |
+| VBA workbook, preserve without executing VBA | Native | Macros disabled; fixed editor rejects signed/ActiveX/XLM cases |
+| Read-only question | Read-only inspection | No editor or saving |
+| Insertion/move/sort, table/rule/name changes, spill/array targets | Scoped native extension | Affected objects/references, boundaries and expected results |
+| Connections/model, ActiveX, signatures, encryption, strict relocation | Scoped native workflow | Only applicable feature/refresh/migration checks |
 
-## Native surfaces
+Simple mode scans feature markers once and rejects formulas, external links and unsupported features before writing. Unsupported-library warnings are errors. Ordinary styles, merges, data validation and conditional formatting elsewhere do not imply a full audit.
 
-Prefer, in order of fit:
+Native fixed editing accepts .xlsx/.xlsm and ordinary fixed formula/value/color changes. It preserves existing dynamic arrays but rejects changes to spill or legacy-array targets. It does not manage connections, models, ActiveX, XLM, signatures or encrypted files.
 
-1. A verified live Microsoft Excel session with workbook-aware read/write commands.
-2. An isolated local Microsoft Excel automation instance controlled through COM or a trusted wrapper.
-3. Manual Excel execution using a generated dry-run plan when automation is unavailable.
+An executor rejection calls for inspecting and scoping the operation, not blindly enabling every legacy audit. Engine selection is automatic within authorization; do not request an advanced-route confirmation just because formulas/links exist. Use [edit-plan.md](edit-plan.md) for executor input.
 
-Do not claim that a file library, renderer, LibreOffice, or stale formula cache is Microsoft Excel truth.
-
-## Downgrade rule
-
-If the required native surface is unavailable:
-
-1. Continue only with safe read-only inventory and dry-run planning.
-2. Do not modify the formal workbook through a weaker route.
-3. State the missing capability.
-4. Mark any completed audit `PASS_STRUCTURE_ONLY`, never `PASS_NATIVE`.
-
-## Tool behavior to avoid
-
-- Re-serializing a complex existing workbook merely to alter a few cells.
-- Using a library that reads formula strings but cannot calculate them as final truth.
-- Saving after a strict absolute-path cleanup that Excel may undo.
-- Opening an untrusted macro workbook programmatically before setting macro security.
-- Editing through screen clicks when workbook-aware APIs are available.
-
+Engine and verification scope are independent. Whole-scope protection, linked migration or audit evidence selects [strict-audit.md](strict-audit.md). If native is unavailable, continue only safe read-only preparation and report the missing capability; do not write through weaker tools.

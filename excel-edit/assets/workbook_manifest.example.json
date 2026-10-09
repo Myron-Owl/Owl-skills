@@ -50,7 +50,7 @@
     ]
   },
   "calculation": {
-    "mode": "full_rebuild",
+    "mode": "automatic",
     "wait_for_done": true,
     "timeout_seconds": 600,
     "update_workbook_links": true,
@@ -84,5 +84,7 @@
     "max_writable_sessions": 1,
     "rollback_on_failure": true
   },
-  "notes": []
+  "notes": [
+    "Illustrative portable linked delivery. Resolve actual files/ranges/results. Full/rebuild calculation needs an identified reason. Relocation is for portable delivery, not a routine default."
+  ]
 }

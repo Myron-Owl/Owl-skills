@@ -1,100 +1,34 @@
-# Validation and rollback
+# Checks proportional to changes
 
-## Evidence layers
+## Routine minimum
 
-Validate independently:
+Check target identity and before-values, save once to a staged file, reopen it, verify written types/values/colors and preserve unrequested local style properties and dimensions. Commit only after success and a concurrent-change check. Library reopening is not Excel calculation proof.
 
-1. **Edit evidence** — requested cells and objects changed exactly as planned.
-2. **Structure evidence** — OOXML package, relationships, tables, validations, names, and merge ranges remain legal.
-3. **Formula evidence** — formula text/pattern, cell kind, blank state, cached results, and errors match the contract.
-4. **Native evidence** — Microsoft Excel updates permitted links, finishes calculation, saves without repair, closes, and reopens cleanly.
-5. **Visual evidence** — affected user-facing sheets remain readable and correctly formatted.
+Native editing additionally checks unchanged formulas/link targets and reopens with source workbooks closed, link updates disabled and normal load (no repair/extraction). Do not add repeated reopening, PDF export or reports after these pass without new evidence.
 
-One layer cannot substitute for another.
+| Trigger | Additional check |
+|---|---|
+| Inputs/formulas needing updated results | Required source chain, smart calculation and explicit expected business results |
+| Repeated/generated formula blocks | First/last and mapping boundaries in generation; executor checks requested formula blocks |
+| Insertion/deletion/movement/object expansion | Affected formulas/names/tables/validation/conditional-format ranges and active-ID counts |
+| New external reference | Intended source/sheet/range, expected link list, business result, source-closed reopen |
+| Moving/renaming linked delivery files | Requested directory-layout relocation test |
+| Strict zero absolute metadata | Targeted package audit after final native save |
+| Actual layout/readability/color ambiguity | Inspect affected range visually; screenshot only when needed |
+| Queries/macros/specialized features | Their specific allowed refresh/execution/preservation behavior |
 
-## Formula and protected-range checks
+If error scans are useful, compare before/after in affected result regions, include relevant #SPILL!/#CALC! errors, and distinguish old errors from introduced errors. Do not repair unrelated old errors. No-error results can still use wrong ranges: check expected values/counts. Full/rebuild calculation requires an identified issue.
 
-Scan at least `#REF!`, `#DIV/0!`, `#VALUE!`, `#NAME?`, and `#N/A`. Report workbook, sheet, address, formula, cached/displayed value, and business check.
+## Recovery
 
-For strict protection compare each cell's:
+Fixed editors retain the original until staged verification succeeds, then replace it in the same directory. On failure close the owned Excel instance without saving originals. Retain available failed staging copies for bounded diagnostics and inspect before retrying; remove only diagnosed task-owned copies after successful recovery, within authorization. Never overwrite a locked source or claim successful recovery when cleanup failed.
 
-- Formula text and formula attributes.
-- Constant/formula/blank kind.
-- Cached value where meaningful.
-- True blank versus formula returning an empty string.
-- Declared number format or style evidence.
+For custom operations without staged replacement, retain a recovery copy or explicitly verified mechanism. Multi-file changes need a coherent recovery set and all targets staged/verified before commit. SVN may not contain current uncommitted data; do not assume otherwise or run SVN without authorization.
 
-For formula-structure protection compare formula text, native R1C1 pattern when available, formula/constant kind, formula attributes, and declared style evidence. Permit cached/displayed values to change only through the approved dependency chain; validate those values through acceptance checks rather than equality to the baseline.
+## Optional audit resources
 
-For formula blocks, compare normalized R1C1 patterns when the native API can supply them. Always inspect the first, every mapping boundary, representative middle, and last row after save.
+scripts/inspect_xlsx_package.py and full manifest/report examples remain for requested strict-preservation/migration work. Portable links and absence of absolute fallback metadata are different requirements. Do not clean externalLinkPath, alternateUrls, absoluteUrl or absPath during routine edits.
 
-## External links
+Report file/scope, checks, calculation/source freshness and real limitations concisely. No default validation JSON/PDF/report. Formula preservation does not imply all results or unrelated package bytes were audited.
 
-Verify:
-
-- Formula refers to the intended real workbook and worksheet.
-- External-link relationship exists and resolves to the intended file.
-- Source-closed behavior is correct.
-- Formula cache is fresh after native calculation.
-- The complete dependency set works after relocation when required.
-- Strict no-absolute-path packages contain no prohibited drive, UNC, or `file:///` targets after the final writable save.
-
-Excel may preserve a relative primary external-link relationship and still add absolute fallback metadata during native save. For strict relative packages, inspect all of these after the last writable save:
-
-- `xl/externalLinks/_rels/*.rels` absolute `externalLinkPath` relationships.
-- `xxl21:alternateUrls` / `xxl21:absoluteUrl` nodes in `xl/externalLinks/*.xml`.
-- `x15ac:absPath` metadata in `xl/workbook.xml`.
-
-If cleanup is authorized, back up the workbook and patch only the proven absolute fallback nodes. Keep the relative primary relationship. Then reopen in Excel read-only, run acceptance checks, repeat the relocation test, audit the package again, and never save the cleaned formal workbook from Excel afterward. For package access, use a ZIP-capable API such as .NET `ZipArchive`; PowerShell `Expand-Archive` may reject an `.xlsx` extension even though the file is a ZIP package.
-
-Make cleanup feature-detected and idempotent. Optional `externalLinks` parts or fallback nodes may already be absent; absence is not an error. The completion condition is a clean package audit with no prohibited absolute-path hits, followed by read-only reopen and relocation success.
-
-Run the read-only package audit:
-
-```text
-python scripts/inspect_xlsx_package.py workbook.xlsx --pretty
-```
-
-If strict no-absolute-path cleanup is performed, do it after the last writable Excel save, then reopen read-only and never overwrite the formal file again.
-
-## Visual checks
-
-Inspect every affected sheet and each downstream presentation/result sheet. Check clipped headers and numbers, widths, row heights, formats, freezes, filters, validation prompts, conditional formatting, charts, and abnormal used ranges. Reinspect after layout repairs.
-
-Treat image export as asynchronous. After `CopyPicture`, allow the clipboard to settle, then verify that the PNG has plausible dimensions and is not near-blank. If the workbook contains visible styled cells but the preview is blank, reactivate the sheet, copy the smallest required range, wait, and retry. A successful `Chart.Export` return value alone is not visual evidence.
-
-If `CopyPicture` or chart export remains blank or raises `0x800A03EC`, use a read-only native fallback: set a temporary print area in memory, export the affected sheet range with `ExportAsFixedFormat` to PDF, render the PDF to an image, inspect it, close without saving, and discard the temporary files. Never save preview-only page setup changes into the formal workbook.
-
-Also inspect business semantics that formula-error scans cannot detect: status cells unexpectedly showing failure, optional IDs changing from blank to `0`, reserved rows counted as live records, percentages or units rendered incorrectly, and valid formulas referencing a truncated range. Define valid-record counts from stable IDs and compare passed-status counts to those IDs rather than to physical row count, `UsedRange`, or the number of formula cells.
-
-## Rollback order
-
-On any commit, link-cleanup, reopen, or native-validation failure:
-
-1. Stop further writes and saves.
-2. Close the target workbook without saving new changes.
-3. Close read-only dependencies.
-4. Quit the isolated Excel instance.
-5. Release automation objects.
-6. Confirm target files are unlocked.
-7. Restore backups to formal locations.
-8. Recompute hashes and compare them with backup hashes.
-9. Return `ROLLED_BACK` only after equality is proven; otherwise return the underlying failure plus incomplete-recovery details.
-
-Never overwrite a locked file and never kill unrelated Excel processes.
-
-## Report
-
-Copy `assets/validation_report.example.json`. Include:
-
-- Final state.
-- Route and native Excel version.
-- Exact files changed.
-- Planned versus actual writes.
-- Formula errors and allowed exceptions.
-- Protected-range diff counts.
-- Formula-structure diff counts, reported separately from permitted recalculated-value changes.
-- External-link and relocation evidence.
-- Backup and rollback evidence.
-- Known limitations and warnings.
-- Failure stage, workbook, sheet/range, operation, native error/HRESULT, and script stack when applicable.
+Declared whole-scope protection, linked migration and audit evidence use [strict-audit.md](strict-audit.md); routine defaults still apply to ordinary edits.

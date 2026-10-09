@@ -89,13 +89,14 @@ try {
       $codexRoot=$(if(-not [string]::IsNullOrWhiteSpace($env:CODEX_HOME)){$env:CODEX_HOME}else{Join-Path $env:USERPROFILE '.codex'})
       $validator=Join-Path $codexRoot 'skills\excel-edit\scripts\validate_manifest.py'
     }
-    $python=Get-Command python -ErrorAction SilentlyContinue
+    $pythonLauncher=Join-Path (Split-Path -Parent $validator) 'excel-python.cmd'
+    if(-not [string]::IsNullOrWhiteSpace($PSScriptRoot)){$pythonLauncher=Join-Path $PSScriptRoot 'excel-python.cmd'}
     if(-not (Test-Path -LiteralPath $validator -PathType Leaf)){
       Add-Error 'MANIFEST_VALIDATOR_NOT_FOUND' "validate_manifest.py not found: $validator"
-    } elseif($null -eq $python){
-      Add-Error 'PYTHON_NOT_FOUND' 'python is required to validate the workbook manifest.'
+    } elseif(-not (Test-Path -LiteralPath $pythonLauncher -PathType Leaf)){
+      Add-Error 'PYTHON_NOT_FOUND' "The skill's pinned Python launcher was not found: $pythonLauncher"
     } else {
-      $manifestOutput=& $python.Source $validator $resolvedManifest 2>&1
+      $manifestOutput=& $pythonLauncher -B $validator $resolvedManifest 2>&1
       $report.checks.manifestOutput=($manifestOutput -join "`n")
       if($LASTEXITCODE -ne 0){Add-Error 'MANIFEST_INVALID' 'validate_manifest.py rejected the manifest.'}else{$report.checks.manifest=$true}
     }

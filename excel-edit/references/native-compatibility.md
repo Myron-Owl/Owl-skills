@@ -1,0 +1,11 @@
+# Native compatibility maintenance
+
+The runtime check includes lxml.etree. Formula comparisons tokenize RANGE operands, normalize worksheet quoting and known external path expansion, and preserve literals, operators and addresses. Do not strip apostrophes globally or trust equal cached results as proof of formula equivalence. Formula writes restore the target number format if Excel inherits a referenced cell's percentage/date format.
+
+New row heights and widths use native Excel units and are verified through Excel after saved reopening. OOXML values may differ (26 versus 26.1 points, 18 versus 18.625 width). Existing dimensions retain their normal checks. Errors include expected/actual values and locations; do not guess replacement dimensions to evade a failure.
+
+For all native transactions, native_preservation restores only untouched merged anchors whose content and every other style component are unchanged, and whose sole alignment difference is wrap True becoming off. It clones styles, resolves worksheet paths via workbook relationships, and uses lxml to preserve namespace declarations including those named by mc:Ignorable. Other style/content changes are not repaired or ignored. The patched staging file must pass ordinary native reopening and all preservation checks before replacement. No openpyxl save, repair-mode open, whole-style overwrite or blind retry.
+
+Old page settings and validation metadata are captured by the shared native transaction and compared before commit. This is property preservation, not a claim of byte-identical package preservation. Failed staged files are retained for bounded diagnostics; read the existing failure instead of creating temporary wrappers and rerunning to discover each difference.
+
+Development validation: test_native_compat.py covers formula/literal distinctions and namespace/relationship-safe wrapping repair. Its --fixture option copies a previous numerical workbook into temporary storage, tests native new-sheet creation, exact native row height, formula results and failure retention. Run test_editors.py --native for core editing/link regressions and test_new_sheets.py for sheet creation. Never run these suites for routine edits.

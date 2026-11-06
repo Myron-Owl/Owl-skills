@@ -1,0 +1,4 @@
+interface:
+  display_name: "润笔 · 流离色"
+  short_description: "结合个人文章习惯润色中文，减少空话与机械表达，保留原意、语气和文学节奏"
+  default_prompt: "使用 $runbi 润色下面的文字，保留我的原意和语气，减少空话与机械表达。"

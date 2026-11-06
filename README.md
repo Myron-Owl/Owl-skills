@@ -18,6 +18,7 @@
 | [godot-shader](godot-shader/README.md) | `/godot-shader` | Godot 4.X Shader 中文手册 — 22章从基础到3D特效，查配方、确认语法即用 |
 | [lmeeting](lmeeting/README.md) | `/lmeeting` | 游戏项目会议方法 — 支持创意、评审、美术、技术、排期、试玩、验收与复盘 |
 | [medieval](medieval/README.md) | `/medieval` | 中世纪游戏中英本地化 — 翻译、审校与术语维护，保留变量和规则含义 |
+| [runbi](runbi/README.md) | `/runbi` | 中文润笔与去 AI 味 — 保留原意与作者声音，结合个人文风校准，清理空话和机械表达 |
 
 > 每个 skill 目录内有详细的 README 说明。点上面的 skill 名称查看。
 
